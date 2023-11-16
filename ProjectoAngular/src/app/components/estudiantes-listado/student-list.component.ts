@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import { StudentListService } from 'src/app/services/estudiante-lista.service';
+import { StudentListService } from 'src/app/services/student-list.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap'
 import { Students } from 'src/app/models/students';
 import { FormControl,FormGroup,Validators } from '@angular/forms';
@@ -48,6 +48,40 @@ import { FormControl,FormGroup,Validators } from '@angular/forms';
   get firstName() {return this.studentForm.get('firstName')}
   get email() {return this.studentForm.get('email')}
 
+  view(ver: any, s: Students) {
+    this.id2 = s.id
+    this.dni2 = s.dni
+    this.lastName2 = s.lastName
+    this.firstName2 = s.firstName
+    this.email2 = s.email
+    this.dni3 = s.dni
+    this.lastName3 = s.lastName
+    this.firstName3 = s.firstName
+    this.email3 = s.email
+    this.modalService.open(ver).result.then(() => {
+      if (this.dni2.trim() !== '' && this.lastName2.trim() !== '' && this.firstName2.trim() !== '' && this.email2.trim() !== '' &&
+        (this.dni2.trim() !== this.dni3.trim() || this.lastName2.trim() !== this.lastName3.trim() || this.firstName2.trim() !== this.firstName3.trim() || this.email2.trim() !== this.email3.trim())) {
+        let student = new Students()
+        student.id = this.id2
+        student.dni = this.dni2
+        student.lastName = this.lastName2
+        student.firstName = this.firstName2
+        student.email = this.email2
+        student.cohort = 0
+        student.status = 'activo'
+        student.gender = 'masculino'
+        student.address = 'abc123'
+        student.phone = '000'
+        this.StudentListService.update(student).subscribe(() => {
+          location.reload()
+        }, error => {
+          console.error(error)
+          alert('Error: ' + error.message)
+        })
+      }
+    }, reason => { })
+  }
+  
   getAll(){
     this.StudentListService.getAll().subscribe(
       (response) => {
@@ -95,38 +129,4 @@ import { FormControl,FormGroup,Validators } from '@angular/forms';
         alert('Error: ' + error.error.message);
         document.getElementsByTagName('input')[0].focus();
       });
-    }
-
-    view(ver: any, s: Students) {
-      this.id2 = s.id
-      this.dni2 = s.dni
-      this.lastName2 = s.lastName
-      this.firstName2 = s.firstName
-      this.email2 = s.email
-      this.dni3 = s.dni
-      this.lastName3 = s.lastName
-      this.firstName3 = s.firstName
-      this.email3 = s.email
-      this.modalService.open(ver).result.then(() => {
-        if (this.dni2.trim() !== '' && this.lastName2.trim() !== '' && this.firstName2.trim() !== '' && this.email2.trim() !== '' &&
-          (this.dni2.trim() !== this.dni3.trim() || this.lastName2.trim() !== this.lastName3.trim() || this.firstName2.trim() !== this.firstName3.trim() || this.email2.trim() !== this.email3.trim())) {
-          let student = new Students()
-          student.id = this.id2
-          student.dni = this.dni2
-          student.lastName = this.lastName2
-          student.firstName = this.firstName2
-          student.email = this.email2
-          student.cohort = 0
-          student.status = 'activo'
-          student.gender = 'masculino'
-          student.address = 'abc123'
-          student.phone = '000'
-          this.StudentListService.update(student).subscribe(() => {
-            location.reload()
-          }, error => {
-            console.error(error)
-            alert('Error: ' + error.message)
-          })
-        }
-      }, reason => { })
     }
